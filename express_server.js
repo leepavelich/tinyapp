@@ -11,7 +11,7 @@ const urlDatabase = {
 };
 
 const bodyParser = require('body-parser');
-const { url } = require('inspector');
+// const { url } = require('inspector');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
