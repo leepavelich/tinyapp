@@ -1,8 +1,9 @@
 const express = require('express');
 const crypto = require('crypto');
-const app = express();
+const cookieParser = require('cookie-parser');
 const PORT = 8080; // default port 8080
 
+const app = express();
 app.set('view engine', 'ejs');
 
 const urlDatabase = {
