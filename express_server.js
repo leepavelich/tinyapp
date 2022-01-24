@@ -11,6 +11,7 @@ const urlDatabase = {
 };
 
 const bodyParser = require('body-parser');
+const { url } = require('inspector');
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
@@ -35,6 +36,11 @@ app.post('/urls', (req, res) => {
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(302, `/urls/${shortURL}`); // Respond with 'Ok' (we will replace this)
 });
+
+app.post('/urls/:shortURL/delete', (req, res) => {
+  delete urlDatabase[req.params.shortURL]
+  res.redirect('/urls/')
+})
 
 app.get('/urls/new', (req, res) => {
   res.render('urls_new');
