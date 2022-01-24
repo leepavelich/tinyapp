@@ -11,20 +11,12 @@ const urlDatabase = {
   '9sm5xK': 'http://www.google.com'
 };
 
-const bodyParser = require('body-parser');
-// const { url } = require('inspector');
-app.use(bodyParser.urlencoded({ extended: true }));
-
 app.get('/', (req, res) => {
-  res.send('Hello!');
+  res.redirect('/urls/')
 });
 
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
-});
-
-app.get('/hello', (req, res) => {
-  res.send('<html><body>Hello <b>World</b></body></html>\n');
 });
 
 app.get('/urls', (req, res) => {
