@@ -23,7 +23,7 @@ app.get('/hello', (req, res) => {
 
 app.get('/urls', (req, res) => {
   const templateVars = { urls: urlDatabase };
-  res.prependListener('urls_index', templateVars);
+  res.render('urls_index', templateVars);
 });
 
 app.listen(PORT, () => {
