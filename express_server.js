@@ -105,12 +105,13 @@ app.post('/login', (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
+  const user_id = getUserID(email,users)
 
   if (!emailLookup(email, users) || !passwordCompare(email, password, users)) {
     res.status(403);
     res.render('403_page', templateVars);
   }
-  res.cookie('user_id', req.body.username);
+  res.cookie('user_id', user_id);
   
   res.redirect('urls');
 });
@@ -165,6 +166,10 @@ const emailLookup = (email, obj) => {
 };
 
 const passwordCompare = (email, password, obj) => {
-  const user = Object.keys(obj).filter(k => obj[k].email === email)[0]
+  const user = getUserID(email, obj)
   return obj[user].password === password
+}
+
+const getUserID = (email, obj) => {
+  return Object.keys(obj).filter(k => obj[k].email === email)[0]
 }
