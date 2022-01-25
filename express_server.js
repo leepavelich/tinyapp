@@ -86,8 +86,18 @@ app.post('/register', (req, res) => {
   res.redirect('/register/');
 });
 
-app.post('/login', (req, res) => {
+app.get('/login', (req, res) => {
+  const templateVars = {
+    user: users[req.cookies.user_id]
+  };
+  res.render('login', templateVars);
+});
+
+app.post('/test', (req, res) => {
   res.cookie('user_id', req.body.username);
+  const templateVars = {
+    user: users[req.cookies.user_id]
+  };
   res.redirect('urls');
 });
 
