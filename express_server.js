@@ -36,7 +36,6 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
-
 // Shortened URLs
 app.get('/urls', (req, res) => {
   const templateVars = {
@@ -105,14 +104,14 @@ app.post('/login', (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
-  const user_id = getUserID(email,users)
+  const userID = getUserID(email, users);
 
   if (!emailLookup(email, users) || !passwordCompare(email, password, users)) {
     res.status(403);
     res.render('403_page', templateVars);
   }
-  res.cookie('user_id', user_id);
-  
+  res.cookie('user_id', userID);
+
   res.redirect('urls');
 });
 
@@ -166,10 +165,10 @@ const emailLookup = (email, obj) => {
 };
 
 const passwordCompare = (email, password, obj) => {
-  const user = getUserID(email, obj)
-  return obj[user].password === password
-}
+  const user = getUserID(email, obj);
+  return obj[user].password === password;
+};
 
 const getUserID = (email, obj) => {
-  return Object.keys(obj).filter(k => obj[k].email === email)[0]
-}
+  return Object.keys(obj).filter(k => obj[k].email === email)[0];
+};
