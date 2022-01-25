@@ -15,13 +15,14 @@
     <%- include('partials/_header') %>
 
     <main style="margin: 1em;">
-      <h3>Register</h3>
-      <form class="form-inline" action="/register" method="POST">
-        <div class="form-group mb-2">
-          <label for="email">Enter an email and password:</label>
-          <input class="form-control" type="email" name="email" placeholder="Email" style="width: 300px; margin: 0.5em">
-          <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px; margin: 0.5em">
-          <button type="submit" class="btn btn-primary">Submit</button>
+      <h3>Create Account</h3>
+      <form class="form-vertical" action="/register" method="POST">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input class="form-control" type="email" name="email" placeholder="Email" style="width: 300px;">
+          <label for="password" style="margin-top: 1em">Password</label>
+          <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px;">
+          <button type="submit" class="btn btn-primary" style="margin-top: 1em">Register</button>
         </div>
       </form>
     </main>

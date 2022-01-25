@@ -16,12 +16,13 @@
 
     <main style="margin: 1em;">
       <h3>Login</h3>
-      <form class="form-inline" action="/login" method="POST">
-        <div class="form-group mb-2">
-          <label for="email">Please enter your email and password:</label>
-          <input class="form-control" type="email" name="email" placeholder="Email" style="width: 300px; margin: 0.5em">
-          <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px; margin: 0.5em">
-          <button type="submit" class="btn btn-primary">Submit</button>
+      <form class="form-vertical" action="/login" method="POST">
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <input class="form-control" type="email" name="email" placeholder="Email" style="width: 300px">
+          <label for="password" style="margin-top: 1em">Password</label>
+          <input class="form-control" type="password" name="password" placeholder="Password" style="width: 300px">
+          <button type="submit" class="btn btn-primary" style="margin-top: 1em">Login</button>
         </div>
       </form>
     </main>
