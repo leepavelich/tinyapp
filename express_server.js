@@ -27,6 +27,7 @@ const users = {
   }
 };
 
+// Main
 app.get('/', (req, res) => {
   res.redirect('/urls/');
 });
@@ -35,6 +36,8 @@ app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
+
+// Shortened URLs
 app.get('/urls', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id],
@@ -59,6 +62,7 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls/');
 });
 
+// Register
 app.get('/register', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id]
@@ -86,6 +90,7 @@ app.post('/register', (req, res) => {
   res.redirect('/register/');
 });
 
+// Login
 app.get('/login', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id]
@@ -93,19 +98,30 @@ app.get('/login', (req, res) => {
   res.render('login', templateVars);
 });
 
-app.post('/test', (req, res) => {
-  res.cookie('user_id', req.body.username);
+app.post('/login', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id]
   };
+
+  const email = req.body.email;
+  const password = req.body.password;
+
+  if (!emailLookup(email, users) || !passwordCompare(email, password, users)) {
+    res.status(403);
+    res.render('403_page', templateVars);
+  }
+  res.cookie('user_id', req.body.username);
+  
   res.redirect('urls');
 });
 
+// Logout
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('urls');
 });
 
+// Create New URL
 app.get('/urls/new', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id]
@@ -113,6 +129,7 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
+// Shortened URL individual pages and redirect
 app.get('/urls/:shortURL', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id],
@@ -127,6 +144,7 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
+// Catch-all for non-existent routes
 app.get('*', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id]
@@ -139,8 +157,14 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
+// Helper functions
 const generateRandomString = () => crypto.randomBytes(3).toString('hex');
 
 const emailLookup = (email, obj) => {
   return Object.keys(obj).some(k => obj[k].email === email);
 };
+
+const passwordCompare = (email, password, obj) => {
+  const user = Object.keys(obj).filter(k => obj[k].email === email)[0]
+  return obj[user].password === password
+}
