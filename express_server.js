@@ -55,12 +55,12 @@ app.get('/register', (req, res) => {
 
 app.post('/login', (req, res) => {
   res.cookie('username', req.body.username);
-  res.redirect('back');
+  res.redirect('urls');
 });
 
 app.post('/logout', (req, res) => {
   res.clearCookie('username');
-  res.redirect('back');
+  res.redirect('urls');
 });
 
 app.get('/urls/new', (req, res) => {
