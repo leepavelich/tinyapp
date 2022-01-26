@@ -2,13 +2,16 @@ const express = require('express');
 const crypto = require('crypto');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcryptjs');
 const PORT = 8080; // default port 8080
+
+
+const app = express();
+app.set('view engine', 'ejs');
 
 /// /////////////////
 // MIDDELWARE     //
 /// /////////////////
-const app = express();
-app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
@@ -34,12 +37,12 @@ const users = {
   userRandomID: {
     id: 'userRandomID',
     email: 'user@example.com',
-    password: 'purple'
+    hashedPassword: bcrypt.hashSync('purple', 10)
   },
   user2RandomID: {
     id: 'user2RandomID',
     email: 'user2@example.com',
-    password: 'dishwasher'
+    hashedPassword: bcrypt.hashSync('dish', 10)
   }
 };
 
@@ -164,11 +167,12 @@ app.post('/register', (req, res) => {
     res.render('400_page', templateVars);
   }
 
+  const password = req.body.password;
   const userID = generateRandomString();
   users[userID] = {
     id: userID,
     email: req.body.email,
-    password: req.body.password
+    hashedPassword: bcrypt.hashSync(password, 10)
   };
   res.cookie('user_id', userID);
   res.redirect('/register/');
@@ -298,7 +302,8 @@ const emailLookup = (email, obj) => {
 
 const passwordCompare = (email, password, obj) => {
   const user = getUserID(email, obj);
-  return obj[user].password === password;
+  // return obj[user].password === password;
+  return bcrypt.compareSync(password, obj[user].hashedPassword);
 };
 
 const getUserID = (email, obj) => {
