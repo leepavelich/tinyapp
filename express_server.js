@@ -83,14 +83,49 @@ app.post('/urls', (req, res) => {
 });
 
 app.post('/urls/:shortURL/edit', (req, res) => {
+  // if not logged in, redirect
+  if(!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] })
+  }
+
+  const templateVars = {
+    user: users[req.cookies.user_id],
+    shortURL: req.params.shortURL,
+  };
+
+  // URL must belong to user
+  const userID = templateVars.user.id;
+  console.log(urlDatabase[req.params.shortURL]);
+  if (userID !== urlDatabase[req.params.shortURL].userID) {
+    res.render('wrong-user', { user: users[req.cookies.user_id] })
+  }
+
   urlDatabase[req.params.shortURL] = {
     longURL: req.body.longURL,
     userID: users[req.cookies.user_id].id
   };
+  
   res.redirect('/urls/');
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
+  // if not logged in, redirect
+  if(!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] })
+  }
+
+  const templateVars = {
+    user: users[req.cookies.user_id],
+    shortURL: req.params.shortURL,
+  };
+
+  // URL must belong to user
+  const userID = templateVars.user.id;
+  console.log(urlDatabase[req.params.shortURL]);
+  if (userID !== urlDatabase[req.params.shortURL].userID) {
+    res.render('wrong-user', { user: users[req.cookies.user_id] })
+  }
+  
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls/');
 });
@@ -192,6 +227,7 @@ app.get('/urls/:shortURL', (req, res) => {
     shortURL: req.params.shortURL,
   };
 
+  // URL must belong to user
   const userID = templateVars.user.id;
   console.log(urlDatabase[req.params.shortURL]);
   if (userID !== urlDatabase[req.params.shortURL].userID) {
