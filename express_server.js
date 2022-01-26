@@ -63,9 +63,15 @@ app.post('/urls/:shortURL/delete', (req, res) => {
 
 // Register
 app.get('/register', (req, res) => {
+   // if logged in, redirect
+   if(req.cookies.user_id) {
+    res.redirect('/urls/')
+  }
+
   const templateVars = {
     user: users[req.cookies.user_id]
   };
+
   res.render('register', templateVars);
 });
 
@@ -91,9 +97,15 @@ app.post('/register', (req, res) => {
 
 // Login
 app.get('/login', (req, res) => {
+    // if logged in, redirect
+    if(req.cookies.user_id) {
+      res.redirect('/urls/')
+    }
+
   const templateVars = {
     user: users[req.cookies.user_id]
   };
+
   res.render('login', templateVars);
 });
 
