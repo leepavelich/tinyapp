@@ -10,8 +10,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const urlDatabase = {
-  b2xVn2: 'http://www.lighthouselabs.ca',
-  '9sm5xK': 'http://www.google.com'
+  b2xVn2: {
+    longURL: 'http://www.lighthouselabs.ca',
+    userID: 'userRandomID',
+  },
+  i3BoGr: {
+    longURL: 'http://www.google.com',
+    userID: 'user2RandomID',
+  } 
 };
 
 const users = {
@@ -40,10 +46,12 @@ app.get('/urls.json', (req, res) => {
 app.get('/urls', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id],
-    urls: urlDatabase
+    urls: urlDatabase[req.cookies.user_id],
   };
   res.render('urls_index', templateVars);
 });
+
+
 
 app.post('/urls', (req, res) => {
   // if not logged in, error
@@ -52,12 +60,18 @@ app.post('/urls', (req, res) => {
   }
 
   const shortURL = generateRandomString();
-  urlDatabase[shortURL] = req.body.longURL;
+  urlDatabase[shortURL] = {
+    longURL: req.body.longURL,
+    userID: users[req.cookies.user_id].id
+  };
   res.redirect(302, `/urls/${shortURL}`);
 });
 
 app.post('/urls/:shortURL/edit', (req, res) => {
-  urlDatabase[req.params.shortURL] = req.body.longURL;
+  urlDatabase[req.params.shortURL] = {
+    longURL: req.body.longURL,
+    userID: users[req.cookies.user_id].id
+  };
   res.redirect('/urls/');
 });
 
@@ -153,16 +167,30 @@ app.get('/urls/new', (req, res) => {
 
 // Shortened URL individual pages and redirect
 app.get('/urls/:shortURL', (req, res) => {
-  const templateVars = {
+    const templateVars = {
     user: users[req.cookies.user_id],
     shortURL: req.params.shortURL,
-    longURL: urlDatabase[req.params.shortURL]
-  };
+    };
+
+  // if page doesn't exist, redirect
+  if (!urlDatabase[req.params.shortURL]) {
+    res.status(404);
+    res.redirect('/404_page/')
+  }
+
+  templateVars['longURL'] = urlDatabase[req.params.shortURL].longURL;
+
   res.render('urls_show', templateVars);
 });
 
 app.get('/u/:shortURL', (req, res) => {
-  const longURL = urlDatabase[req.params.shortURL];
+  // if page doesn't exist, redirect
+  if (!urlDatabase[req.params.shortURL]) {
+    res.status(404);
+    res.redirect('/404_page/')
+  }
+
+  const longURL = urlDatabase[req.params.shortURL].longURL;
   res.redirect(longURL);
 });
 
