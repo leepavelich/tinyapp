@@ -3,10 +3,10 @@ const crypto = require('crypto');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
-const helpers = require('./helpers');
 const { CLIENT_RENEG_WINDOW } = require('tls');
 const PORT = 8080; // default port 8080
 
+const { getUserByEmail , generateRandomString, emailLookup, passwordCompare, urlsForUser} = require('./helpers');
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -175,7 +175,7 @@ app.post('/register', (req, res) => {
 
   const password = req.body.password;
   req.session.user_id = generateRandomString();
-  
+
   users[req.session.user_id] = {
     id: req.session.user_id,
     email: req.body.email,
@@ -208,7 +208,7 @@ app.post('/login', (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
-  const userID = helpers.getUserByEmail(email, users);
+  const userID = getUserByEmail(email, users);
 
   req.session.user_id = userID;
 
@@ -298,26 +298,3 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-/// /////////////////
-// HELPER FUNCS   //
-/// /////////////////
-const generateRandomString = () => crypto.randomBytes(3).toString('hex');
-
-const emailLookup = (email, obj) => {
-  return Object.keys(obj).some(k => obj[k].email === email);
-};
-
-const passwordCompare = (email, password, database) => {
-  const user = getUserByEmail(email, database);
-  // return obj[user].password === password;
-  return bcrypt.compareSync(password, database[user].hashedPassword);
-};
-
-const urlsForUser = (id, database) => {
-  const ret = {};
-  Object.keys(database)
-    .filter(key => database[key].userID === id)
-    .forEach(key => ret[key] = database[key].longURL);
-  return ret;
-};
