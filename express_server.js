@@ -12,16 +12,16 @@ app.use(cookieParser());
 const urlDatabase = {
   b2xVn2: {
     longURL: 'http://www.lighthouselabs.ca',
-    userID: 'userRandomID',
+    userID: 'userRandomID'
   },
   i3BoGr: {
     longURL: 'http://www.google.com',
-    userID: 'user2RandomID',
+    userID: 'user2RandomID'
   },
   jk8953: {
     longURL: 'http://www.cbc.ca',
-    userID: 'userRandomID',
-  } 
+    userID: 'userRandomID'
+  }
 };
 
 const users = {
@@ -40,8 +40,8 @@ const users = {
 // Main
 app.get('/', (req, res) => {
   // if logged in, redirect
-  if(req.cookies.user_id) {
-    res.redirect('/urls/')
+  if (req.cookies.user_id) {
+    res.redirect('/urls/');
   }
   res.redirect('/login/');
 });
@@ -53,25 +53,23 @@ app.get('/urls.json', (req, res) => {
 // Shortened URLs
 app.get('/urls', (req, res) => {
   // if not logged in, redirect
-  if(!req.cookies.user_id) {
-    res.render('access-denied', { user: users[req.cookies.user_id] })
+  if (!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] });
   }
 
   const templateVars = {
     user: users[req.cookies.user_id],
-    urls: urlDatabase[req.cookies.user_id],
+    urls: urlDatabase[req.cookies.user_id]
   };
 
-  templateVars.urls = urlsForUser(templateVars.user.id, urlDatabase)
+  templateVars.urls = urlsForUser(templateVars.user.id, urlDatabase);
   res.render('urls_index', templateVars);
 });
 
-
-
 app.post('/urls', (req, res) => {
   // if not logged in, error
-  if(!req.cookies.user_id) {
-    res.status(405).send('Error 405 Method Not Allowed\n')
+  if (!req.cookies.user_id) {
+    res.status(405).send('Error 405 Method Not Allowed\n');
   }
 
   const shortURL = generateRandomString();
@@ -84,57 +82,57 @@ app.post('/urls', (req, res) => {
 
 app.post('/urls/:shortURL/edit', (req, res) => {
   // if not logged in, redirect
-  if(!req.cookies.user_id) {
-    res.render('access-denied', { user: users[req.cookies.user_id] })
+  if (!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] });
   }
 
   const templateVars = {
     user: users[req.cookies.user_id],
-    shortURL: req.params.shortURL,
+    shortURL: req.params.shortURL
   };
 
   // URL must belong to user
   const userID = templateVars.user.id;
   console.log(urlDatabase[req.params.shortURL]);
   if (userID !== urlDatabase[req.params.shortURL].userID) {
-    res.render('wrong-user', { user: users[req.cookies.user_id] })
+    res.render('wrong-user', { user: users[req.cookies.user_id] });
   }
 
   urlDatabase[req.params.shortURL] = {
     longURL: req.body.longURL,
     userID: users[req.cookies.user_id].id
   };
-  
+
   res.redirect('/urls/');
 });
 
 app.post('/urls/:shortURL/delete', (req, res) => {
   // if not logged in, redirect
-  if(!req.cookies.user_id) {
-    res.render('access-denied', { user: users[req.cookies.user_id] })
+  if (!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] });
   }
 
   const templateVars = {
     user: users[req.cookies.user_id],
-    shortURL: req.params.shortURL,
+    shortURL: req.params.shortURL
   };
 
   // URL must belong to user
   const userID = templateVars.user.id;
   console.log(urlDatabase[req.params.shortURL]);
   if (userID !== urlDatabase[req.params.shortURL].userID) {
-    res.render('wrong-user', { user: users[req.cookies.user_id] })
+    res.render('wrong-user', { user: users[req.cookies.user_id] });
   }
-  
+
   delete urlDatabase[req.params.shortURL];
   res.redirect('/urls/');
 });
 
 // Register
 app.get('/register', (req, res) => {
-   // if logged in, redirect
-   if(req.cookies.user_id) {
-    res.redirect('/urls/')
+  // if logged in, redirect
+  if (req.cookies.user_id) {
+    res.redirect('/urls/');
   }
 
   const templateVars = {
@@ -166,10 +164,10 @@ app.post('/register', (req, res) => {
 
 // Login
 app.get('/login', (req, res) => {
-    // if logged in, redirect
-    if(req.cookies.user_id) {
-      res.redirect('/urls/')
-    }
+  // if logged in, redirect
+  if (req.cookies.user_id) {
+    res.redirect('/urls/');
+  }
 
   const templateVars = {
     user: users[req.cookies.user_id]
@@ -204,10 +202,10 @@ app.post('/logout', (req, res) => {
 
 // Create New URL
 app.get('/urls/new', (req, res) => {
-    // if not logged in, redirect
-    if(!req.cookies.user_id) {
-      res.redirect('/login/')
-    }
+  // if not logged in, redirect
+  if (!req.cookies.user_id) {
+    res.redirect('/login/');
+  }
 
   const templateVars = {
     user: users[req.cookies.user_id]
@@ -218,29 +216,29 @@ app.get('/urls/new', (req, res) => {
 // Shortened URL individual pages and redirect
 app.get('/urls/:shortURL', (req, res) => {
   // if not logged in, redirect
-  if(!req.cookies.user_id) {
-    res.render('access-denied', { user: users[req.cookies.user_id] })
+  if (!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] });
   }
 
   const templateVars = {
     user: users[req.cookies.user_id],
-    shortURL: req.params.shortURL,
+    shortURL: req.params.shortURL
   };
 
   // URL must belong to user
   const userID = templateVars.user.id;
   console.log(urlDatabase[req.params.shortURL]);
   if (userID !== urlDatabase[req.params.shortURL].userID) {
-    res.render('wrong-user', { user: users[req.cookies.user_id] })
+    res.render('wrong-user', { user: users[req.cookies.user_id] });
   }
 
   // if page doesn't exist, redirect
   if (!urlDatabase[req.params.shortURL]) {
     res.status(404);
-    res.redirect('/404_page/')
+    res.redirect('/404_page/');
   }
 
-  templateVars['longURL'] = urlDatabase[req.params.shortURL].longURL;
+  templateVars.longURL = urlDatabase[req.params.shortURL].longURL;
 
   res.render('urls_show', templateVars);
 });
@@ -249,7 +247,7 @@ app.get('/u/:shortURL', (req, res) => {
   // if page doesn't exist, redirect
   if (!urlDatabase[req.params.shortURL]) {
     res.status(404);
-    res.redirect('/404_page/')
+    res.redirect('/404_page/');
   }
 
   const longURL = urlDatabase[req.params.shortURL].longURL;
@@ -289,8 +287,8 @@ const urlsForUser = (id, obj) => {
   const ret = Object.keys(obj)
     .filter(key => obj[key].userID === id)
     .reduce((res, key) => {
-      res[key] = obj[key].longURL
-      return res
-    }, {})
-  return ret
-}
+      res[key] = obj[key].longURL;
+      return res;
+    }, {});
+  return ret;
+};
