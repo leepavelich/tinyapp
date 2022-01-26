@@ -222,3 +222,7 @@ const passwordCompare = (email, password, obj) => {
 const getUserID = (email, obj) => {
   return Object.keys(obj).filter(k => obj[k].email === email)[0];
 };
+
+const urlsForUser = (id, obj) => {
+  return Object.keys(obj).filter(k => obj[k].userID === id);
+}
