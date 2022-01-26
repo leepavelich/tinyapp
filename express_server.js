@@ -3,6 +3,7 @@ const crypto = require('crypto');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
+const helpers = require('./helpers');
 const { CLIENT_RENEG_WINDOW } = require('tls');
 const PORT = 8080; // default port 8080
 
@@ -174,6 +175,7 @@ app.post('/register', (req, res) => {
 
   const password = req.body.password;
   req.session.user_id = generateRandomString();
+  
   users[req.session.user_id] = {
     id: req.session.user_id,
     email: req.body.email,
@@ -206,7 +208,7 @@ app.post('/login', (req, res) => {
 
   const email = req.body.email;
   const password = req.body.password;
-  const userID = getUserID(email, users);
+  const userID = helpers.getUserByEmail(email, users);
 
   req.session.user_id = userID;
 
@@ -306,20 +308,16 @@ const emailLookup = (email, obj) => {
   return Object.keys(obj).some(k => obj[k].email === email);
 };
 
-const passwordCompare = (email, password, obj) => {
-  const user = getUserID(email, obj);
+const passwordCompare = (email, password, database) => {
+  const user = getUserByEmail(email, database);
   // return obj[user].password === password;
-  return bcrypt.compareSync(password, obj[user].hashedPassword);
+  return bcrypt.compareSync(password, database[user].hashedPassword);
 };
 
-const getUserID = (email, obj) => {
-  return Object.keys(obj).filter(k => obj[k].email === email)[0];
-};
-
-const urlsForUser = (id, obj) => {
+const urlsForUser = (id, database) => {
   const ret = {};
-  Object.keys(obj)
-    .filter(key => obj[key].userID === id)
-    .forEach(key => ret[key] = obj[key].longURL);
+  Object.keys(database)
+    .filter(key => database[key].userID === id)
+    .forEach(key => ret[key] = database[key].longURL);
   return ret;
 };
