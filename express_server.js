@@ -17,6 +17,10 @@ const urlDatabase = {
   i3BoGr: {
     longURL: 'http://www.google.com',
     userID: 'user2RandomID',
+  },
+  jk8953: {
+    longURL: 'http://www.cbc.ca',
+    userID: 'userRandomID',
   } 
 };
 
@@ -24,18 +28,22 @@ const users = {
   userRandomID: {
     id: 'userRandomID',
     email: 'user@example.com',
-    password: 'purple-monkey-dinosaur'
+    password: 'purple'
   },
   user2RandomID: {
     id: 'user2RandomID',
     email: 'user2@example.com',
-    password: 'dishwasher-funk'
+    password: 'dishwasher'
   }
 };
 
 // Main
 app.get('/', (req, res) => {
-  res.redirect('/urls/');
+  // if logged in, redirect
+  if(req.cookies.user_id) {
+    res.redirect('/urls/')
+  }
+  res.redirect('/login/');
 });
 
 app.get('/urls.json', (req, res) => {
@@ -44,10 +52,17 @@ app.get('/urls.json', (req, res) => {
 
 // Shortened URLs
 app.get('/urls', (req, res) => {
+  // if not logged in, redirect
+  if(!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] })
+  }
+
   const templateVars = {
     user: users[req.cookies.user_id],
     urls: urlDatabase[req.cookies.user_id],
   };
+
+  templateVars.urls = urlsForUser(templateVars.user.id, urlDatabase)
   res.render('urls_index', templateVars);
 });
 
@@ -149,7 +164,7 @@ app.post('/login', (req, res) => {
 // Logout
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
-  res.redirect('urls');
+  res.redirect('/');
 });
 
 // Create New URL
@@ -224,5 +239,11 @@ const getUserID = (email, obj) => {
 };
 
 const urlsForUser = (id, obj) => {
-  return Object.keys(obj).filter(k => obj[k].userID === id);
+  const ret = Object.keys(obj)
+    .filter(key => obj[key].userID === id)
+    .reduce((res, key) => {
+      res[key] = obj[key].longURL
+      return res
+    }, {})
+  return ret
 }
