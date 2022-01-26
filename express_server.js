@@ -4,11 +4,18 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const PORT = 8080; // default port 8080
 
+////////////////////
+// MIDDELWARE     //
+////////////////////
 const app = express();
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+
+////////////////////
+// DATA           //
+////////////////////
 const urlDatabase = {
   b2xVn2: {
     longURL: 'http://www.lighthouselabs.ca',
@@ -37,7 +44,9 @@ const users = {
   }
 };
 
-// Main
+////////////////////
+// ROOT           //
+////////////////////
 app.get('/', (req, res) => {
   // if logged in, redirect
   if (req.cookies.user_id) {
@@ -46,11 +55,14 @@ app.get('/', (req, res) => {
   res.redirect('/login/');
 });
 
+
+////////////////////
+// URLs LIST      //
+////////////////////
 app.get('/urls.json', (req, res) => {
   res.json(urlDatabase);
 });
 
-// Shortened URLs
 app.get('/urls', (req, res) => {
   // if not logged in, redirect
   if (!req.cookies.user_id) {
@@ -128,7 +140,9 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls/');
 });
 
-// Register
+////////////////////
+// REGISTER       //
+////////////////////
 app.get('/register', (req, res) => {
   // if logged in, redirect
   if (req.cookies.user_id) {
@@ -162,7 +176,9 @@ app.post('/register', (req, res) => {
   res.redirect('/register/');
 });
 
-// Login
+////////////////////
+// LOGIN          //
+////////////////////
 app.get('/login', (req, res) => {
   // if logged in, redirect
   if (req.cookies.user_id) {
@@ -194,13 +210,17 @@ app.post('/login', (req, res) => {
   res.redirect('urls');
 });
 
-// Logout
+////////////////////
+// LOGOUT         //
+////////////////////
 app.post('/logout', (req, res) => {
   res.clearCookie('user_id');
   res.redirect('/');
 });
 
-// Create New URL
+////////////////////
+// CREATE NEW URL //
+////////////////////
 app.get('/urls/new', (req, res) => {
   // if not logged in, redirect
   if (!req.cookies.user_id) {
@@ -254,7 +274,9 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
-// Catch-all for non-existent routes
+////////////////////
+// 404 OTHER      //
+////////////////////
 app.get('*', (req, res) => {
   const templateVars = {
     user: users[req.cookies.user_id]
@@ -267,7 +289,9 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-// Helper functions
+////////////////////
+// HELPER FUNCS   //
+////////////////////
 const generateRandomString = () => crypto.randomBytes(3).toString('hex');
 
 const emailLookup = (email, obj) => {
