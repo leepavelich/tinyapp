@@ -46,6 +46,11 @@ app.get('/urls', (req, res) => {
 });
 
 app.post('/urls', (req, res) => {
+  // if not logged in, error
+  if(!req.cookies.user_id) {
+    res.status(405).send('Error 405 Method Not Allowed\n')
+  }
+
   const shortURL = generateRandomString();
   urlDatabase[shortURL] = req.body.longURL;
   res.redirect(302, `/urls/${shortURL}`);
@@ -135,6 +140,11 @@ app.post('/logout', (req, res) => {
 
 // Create New URL
 app.get('/urls/new', (req, res) => {
+    // if not logged in, redirect
+    if(!req.cookies.user_id) {
+      res.redirect('/login/')
+    }
+
   const templateVars = {
     user: users[req.cookies.user_id]
   };
