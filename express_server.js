@@ -182,10 +182,21 @@ app.get('/urls/new', (req, res) => {
 
 // Shortened URL individual pages and redirect
 app.get('/urls/:shortURL', (req, res) => {
-    const templateVars = {
+  // if not logged in, redirect
+  if(!req.cookies.user_id) {
+    res.render('access-denied', { user: users[req.cookies.user_id] })
+  }
+
+  const templateVars = {
     user: users[req.cookies.user_id],
     shortURL: req.params.shortURL,
-    };
+  };
+
+  const userID = templateVars.user.id;
+  console.log(urlDatabase[req.params.shortURL]);
+  if (userID !== urlDatabase[req.params.shortURL].userID) {
+    res.render('wrong-user', { user: users[req.cookies.user_id] })
+  }
 
   // if page doesn't exist, redirect
   if (!urlDatabase[req.params.shortURL]) {
