@@ -1,5 +1,4 @@
 const express = require('express');
-const crypto = require('crypto');
 const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
@@ -68,9 +67,9 @@ app.get('/', (req, res) => {
 /// /////////////////
 // URLs LIST      //
 /// /////////////////
-app.get('/urls.json', (req, res) => {
-  res.json(urlDatabase);
-});
+// app.get('/urls.json', (req, res) => {
+//   res.json(urlDatabase);
+// });
 
 app.get('/urls', (req, res) => {
   // if not logged in, redirect
