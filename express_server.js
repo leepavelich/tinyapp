@@ -101,7 +101,7 @@ app.post('/urls', (req, res) => {
   res.redirect(302, `/urls/${shortURL}`);
 });
 
-app.put('/urls/:shortURL/edit', (req, res) => {
+app.put('/urls/:shortURL/', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
     res.render('access-denied', { user: users[req.session.user_id] });
