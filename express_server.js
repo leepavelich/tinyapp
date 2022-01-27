@@ -10,7 +10,7 @@ const PORT = 8080; // default port 8080
 const app = express();
 app.set('view engine', 'ejs');
 
-/// /////////////////
+////////////////////
 // MIDDELWARE     //
 /// /////////////////
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,12 +20,12 @@ app.use(cookieSession({
 
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
-}))
-app.use(methodOverride('_method'))
+}));
+app.use(methodOverride('_method'));
 
-/// /////////////////
+////////////////////
 // DATA           //
-/// /////////////////
+////////////////////
 const urlDatabase = {
   b2xVn2: {
     longURL: 'http://www.lighthouselabs.ca',
@@ -54,9 +54,9 @@ const users = {
   }
 };
 
-/// /////////////////
+////////////////////
 // ROOT           //
-/// /////////////////
+////////////////////
 app.get('/', (req, res) => {
   // if logged in, redirect
   if (req.session.user_id) {
@@ -65,12 +65,9 @@ app.get('/', (req, res) => {
   res.redirect('/login/');
 });
 
-/// /////////////////
+////////////////////
 // URLs LIST       //
-/// /////////////////
-// app.get('/urls.json', (req, res) => {
-//   res.json(urlDatabase);
-// });
+////////////////////
 
 app.get('/urls', (req, res) => {
   // if not logged in, redirect
@@ -129,6 +126,9 @@ app.put('/urls/:shortURL/', (req, res) => {
   res.redirect('/urls/');
 });
 
+////////////////////
+// DELETE         //
+////////////////////
 app.post('/urls/:shortURL/delete', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
@@ -150,9 +150,9 @@ app.post('/urls/:shortURL/delete', (req, res) => {
   res.redirect('/urls/');
 });
 
-/// /////////////////
+////////////////////
 // REGISTER       //
-/// /////////////////
+////////////////////
 app.get('/register', (req, res) => {
   // if logged in, redirect
   if (req.session.user_id) {
@@ -188,9 +188,9 @@ app.post('/register', (req, res) => {
   res.redirect('/register/');
 });
 
-/// /////////////////
+////////////////////
 // LOGIN          //
-/// /////////////////
+////////////////////
 app.get('/login', (req, res) => {
   // if logged in, redirect
   if (req.session.user_id) {
@@ -223,18 +223,18 @@ app.post('/login', (req, res) => {
   res.redirect('urls');
 });
 
-/// /////////////////
+////////////////////
 // LOGOUT         //
-/// /////////////////
+////////////////////
 app.post('/logout', (req, res) => {
-  req.session.user_id = null
+  req.session.user_id = null;
 
   res.redirect('/');
 });
 
-/// /////////////////
+////////////////////
 // CREATE NEW URL //
-/// /////////////////
+////////////////////
 app.get('/urls/new', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
@@ -287,9 +287,9 @@ app.get('/u/:shortURL', (req, res) => {
   res.redirect(longURL);
 });
 
-/// /////////////////
+////////////////////
 // 404 OTHER      //
-/// /////////////////
+////////////////////
 app.get('*', (req, res) => {
   const templateVars = {
     user: users[req.session.user_id]
