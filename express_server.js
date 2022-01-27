@@ -3,10 +3,10 @@ const cookieSession = require('cookie-session');
 const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 const { CLIENT_RENEG_WINDOW } = require('tls');
-const PORT = 8080; // default port 8080
-
+const methodOverride = require('method-override');
 const { getUserByEmail , generateRandomString, emailLookup, passwordCompare, urlsForUser} = require('./helpers');
 
+const PORT = 8080; // default port 8080
 const app = express();
 app.set('view engine', 'ejs');
 
@@ -21,6 +21,7 @@ app.use(cookieSession({
   // Cookie Options
   maxAge: 24 * 60 * 60 * 1000 // 24 hours
 }))
+app.use(methodOverride('_method'))
 
 /// /////////////////
 // DATA           //
@@ -100,7 +101,7 @@ app.post('/urls', (req, res) => {
   res.redirect(302, `/urls/${shortURL}`);
 });
 
-app.post('/urls/:shortURL/edit', (req, res) => {
+app.put('/urls/:shortURL/edit', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
     res.render('access-denied', { user: users[req.session.user_id] });
