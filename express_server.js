@@ -82,6 +82,9 @@ app.get('/urls', (req, res) => {
   res.render('urls_index', templateVars);
 });
 
+////////////////////
+// CREATE         //
+////////////////////
 app.post('/urls', (req, res) => {
   // if not logged in, error
   if (!req.session.user_id) {
@@ -231,7 +234,7 @@ app.post('/logout', (req, res) => {
 });
 
 ////////////////////
-// CREATE NEW URL //
+// NEW URL PAGE   //
 ////////////////////
 app.get('/urls/new', (req, res) => {
   // if not logged in, redirect
