@@ -129,7 +129,7 @@ app.put('/urls/:shortURL/', (req, res) => {
 ////////////////////
 // DELETE         //
 ////////////////////
-app.post('/urls/:shortURL/delete', (req, res) => {
+app.delete('/urls/:shortURL/', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
     res.render('access-denied', { user: users[req.session.user_id] });
