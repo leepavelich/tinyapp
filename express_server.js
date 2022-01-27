@@ -96,6 +96,7 @@ app.post('/urls', (req, res) => {
     longURL: req.body.longURL,
     userID: users[req.session.user_id].id
   };
+
   res.redirect(302, `/urls/${shortURL}`);
 });
 
@@ -148,6 +149,7 @@ app.delete('/urls/:shortURL/', (req, res) => {
   }
 
   delete urlDatabase[req.params.shortURL];
+
   res.redirect('/urls/');
 });
 
@@ -245,6 +247,7 @@ app.get('/urls/new', (req, res) => {
   const templateVars = {
     user: users[req.session.user_id]
   };
+
   res.render('urls_new', templateVars);
 });
 
@@ -290,6 +293,7 @@ app.get('/u/:shortURL', (req, res) => {
   }
 
   const longURL = urlDatabase[req.params.shortURL].longURL;
+
   res.redirect(longURL);
 });
 
@@ -300,7 +304,9 @@ app.get('*', (req, res) => {
   const templateVars = {
     user: users[req.session.user_id]
   };
+  
   res.status(404);
+
   res.render('404_page', templateVars);
 });
 
