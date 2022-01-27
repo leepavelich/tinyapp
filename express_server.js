@@ -12,7 +12,7 @@ app.set('view engine', 'ejs');
 
 ////////////////////
 // MIDDELWARE     //
-/// /////////////////
+////////////////////
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieSession({
   name: 'session',
