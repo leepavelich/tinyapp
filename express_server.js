@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
 });
 
 /// /////////////////
-// URLs LIST      //
+// URLs LIST       //
 /// /////////////////
 // app.get('/urls.json', (req, res) => {
 //   res.json(urlDatabase);
@@ -101,6 +101,9 @@ app.post('/urls', (req, res) => {
   res.redirect(302, `/urls/${shortURL}`);
 });
 
+////////////////////
+// EDIT           //
+////////////////////
 app.put('/urls/:shortURL/', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
