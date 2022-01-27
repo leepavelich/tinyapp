@@ -262,7 +262,8 @@ app.get('/urls/:shortURL', (req, res) => {
 
   const templateVars = {
     user: users[req.session.user_id],
-    shortURL: req.params.shortURL
+    shortURL: req.params.shortURL,
+    longURL: urlDatabase[req.params.shortURL].longURL,
   };
 
   // URL must belong to user
@@ -276,8 +277,6 @@ app.get('/urls/:shortURL', (req, res) => {
     res.status(404);
     res.redirect('/404_page/');
   }
-
-  templateVars.longURL = urlDatabase[req.params.shortURL].longURL;
 
   res.render('urls_show', templateVars);
 });
@@ -304,7 +303,7 @@ app.get('*', (req, res) => {
   const templateVars = {
     user: users[req.session.user_id]
   };
-  
+
   res.status(404);
 
   res.render('404_page', templateVars);
