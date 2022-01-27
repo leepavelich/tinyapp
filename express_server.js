@@ -248,7 +248,9 @@ app.get('/urls/new', (req, res) => {
   res.render('urls_new', templateVars);
 });
 
-// Shortened URL individual pages and redirect
+////////////////////
+// SHORT URL PAGE //
+////////////////////
 app.get('/urls/:shortURL', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
@@ -277,6 +279,9 @@ app.get('/urls/:shortURL', (req, res) => {
   res.render('urls_show', templateVars);
 });
 
+////////////////////
+// /u/ REDIRECT   //
+////////////////////
 app.get('/u/:shortURL', (req, res) => {
   // if page doesn't exist, redirect
   if (!urlDatabase[req.params.shortURL]) {
