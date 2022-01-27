@@ -77,10 +77,9 @@ app.get('/urls', (req, res) => {
 
   const templateVars = {
     user: users[req.session.user_id],
-    urls: urlDatabase[req.session.user_id]
+    urls: urlsForUser(users[req.session.user_id].id, urlDatabase)
   };
 
-  templateVars.urls = urlsForUser(templateVars.user.id, urlDatabase);
   res.render('urls_index', templateVars);
 });
 
