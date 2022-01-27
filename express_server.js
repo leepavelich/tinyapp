@@ -66,9 +66,8 @@ app.get('/', (req, res) => {
 });
 
 ////////////////////
-// URLs LIST       //
+// URLs LIST      //
 ////////////////////
-
 app.get('/urls', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
