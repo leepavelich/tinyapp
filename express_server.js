@@ -260,11 +260,19 @@ app.get('/urls/:shortURL', (req, res) => {
     res.render('access-denied', { user: users[req.session.user_id] });
   }
 
+  if (!req.session.views) {
+    req.session.views = 0;
+  }
+  req.session.views++;
+
   const templateVars = {
     user: users[req.session.user_id],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
+    visits: req.session.views,
   };
+
+  console.log(req.session.views);
 
   // URL must belong to user
   const userID = templateVars.user.id;
