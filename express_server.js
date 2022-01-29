@@ -60,9 +60,9 @@ const users = {
 app.get('/', (req, res) => {
   // if logged in, redirect
   if (req.session.user_id) {
-    res.redirect('/urls/');
+    return res.redirect('/urls/');
   }
-  res.redirect('/login/');
+  return res.redirect('/login/');
 });
 
 ////////////////////
@@ -71,7 +71,7 @@ app.get('/', (req, res) => {
 app.get('/urls', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
-    res.render('access-denied', { user: users[req.session.user_id] });
+    return res.render('access-denied', { user: users[req.session.user_id] });
   }
 
   const templateVars = {
@@ -79,7 +79,7 @@ app.get('/urls', (req, res) => {
     urls: urlsForUser(users[req.session.user_id].id, urlDatabase)
   };
 
-  res.render('urls_index', templateVars);
+  return res.render('urls_index', templateVars);
 });
 
 ////////////////////
@@ -88,7 +88,7 @@ app.get('/urls', (req, res) => {
 app.post('/urls', (req, res) => {
   // if not logged in, error
   if (!req.session.user_id) {
-    res.status(405).send('Error 405 Method Not Allowed\n');
+    return res.status(405).send('Error 405 Method Not Allowed\n');
   }
 
   const shortURL = generateRandomString();
@@ -97,7 +97,7 @@ app.post('/urls', (req, res) => {
     userID: users[req.session.user_id].id
   };
 
-  res.redirect(302, `/urls/${shortURL}`);
+  return res.redirect(302, `/urls/${shortURL}`);
 });
 
 ////////////////////
@@ -106,7 +106,7 @@ app.post('/urls', (req, res) => {
 app.put('/urls/:shortURL/', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
-    res.render('access-denied', { user: users[req.session.user_id] });
+    return res.render('access-denied', { user: users[req.session.user_id] });
   }
 
   const templateVars = {
@@ -117,7 +117,7 @@ app.put('/urls/:shortURL/', (req, res) => {
   // URL must belong to user
   const userID = templateVars.user.id;
   if (userID !== urlDatabase[req.params.shortURL].userID) {
-    res.render('wrong-user', { user: users[req.session.user_id] });
+    return res.render('wrong-user', { user: users[req.session.user_id] });
   }
 
   urlDatabase[req.params.shortURL] = {
@@ -125,7 +125,7 @@ app.put('/urls/:shortURL/', (req, res) => {
     userID: users[req.session.user_id].id
   };
 
-  res.redirect('/urls/');
+  return res.redirect('/urls/');
 });
 
 ////////////////////
@@ -134,7 +134,7 @@ app.put('/urls/:shortURL/', (req, res) => {
 app.delete('/urls/:shortURL/', (req, res) => {
   // if not logged in, redirect
   if (!req.session.user_id) {
-    res.render('access-denied', { user: users[req.session.user_id] });
+    return res.render('access-denied', { user: users[req.session.user_id] });
   }
 
   const templateVars = {
@@ -145,12 +145,12 @@ app.delete('/urls/:shortURL/', (req, res) => {
   // URL must belong to user
   const userID = templateVars.user.id;
   if (userID !== urlDatabase[req.params.shortURL].userID) {
-    res.render('wrong-user', { user: users[req.session.user_id] });
+    return res.render('wrong-user', { user: users[req.session.user_id] });
   }
 
   delete urlDatabase[req.params.shortURL];
 
-  res.redirect('/urls/');
+  return res.redirect('/urls/');
 });
 
 ////////////////////
@@ -159,14 +159,14 @@ app.delete('/urls/:shortURL/', (req, res) => {
 app.get('/register', (req, res) => {
   // if logged in, redirect
   if (req.session.user_id) {
-    res.redirect('/urls/');
+    return res.redirect('/urls/');
   }
 
   const templateVars = {
     user: users[req.session.user_id]
   };
 
-  res.render('register', templateVars);
+  return res.render('register', templateVars);
 });
 
 app.post('/register', (req, res) => {
@@ -176,7 +176,7 @@ app.post('/register', (req, res) => {
 
   if (req.body.email === '' || req.body.password === '' || emailLookup(req.body.email, users)) {
     res.status(400);
-    res.render('400_page', templateVars);
+    return res.render('400_page', templateVars);
   }
 
   const password = req.body.password;
@@ -188,7 +188,7 @@ app.post('/register', (req, res) => {
     hashedPassword: bcrypt.hashSync(password, 10)
   };
 
-  res.redirect('/register/');
+  return res.redirect('/register/');
 });
 
 ////////////////////
@@ -197,14 +197,14 @@ app.post('/register', (req, res) => {
 app.get('/login', (req, res) => {
   // if logged in, redirect
   if (req.session.user_id) {
-    res.redirect('/urls/');
+    return res.redirect('/urls/');
   }
 
   const templateVars = {
     user: users[req.session.user_id]
   };
 
-  res.render('login', templateVars);
+  return res.render('login', templateVars);
 });
 
 app.post('/login', (req, res) => {
@@ -220,10 +220,10 @@ app.post('/login', (req, res) => {
 
   if (!emailLookup(email, users) || !passwordCompare(email, password, users)) {
     res.status(403);
-    res.render('403_page', templateVars);
+    return res.render('403_page', templateVars);
   }
 
-  res.redirect('urls');
+  return res.redirect('urls');
 });
 
 ////////////////////
@@ -232,7 +232,7 @@ app.post('/login', (req, res) => {
 app.post('/logout', (req, res) => {
   req.session = null;
 
-  res.redirect('/');
+  return res.redirect('/');
 });
 
 ////////////////////
@@ -248,7 +248,7 @@ app.get('/urls/new', (req, res) => {
     user: users[req.session.user_id]
   };
 
-  res.render('urls_new', templateVars);
+  return res.render('urls_new', templateVars);
 });
 
 ////////////////////
@@ -272,21 +272,19 @@ app.get('/urls/:shortURL', (req, res) => {
     visits: req.session.views,
   };
 
-  console.log(req.session.views);
-
   // URL must belong to user
   const userID = templateVars.user.id;
   if (userID !== urlDatabase[req.params.shortURL].userID) {
-    res.render('wrong-user', { user: users[req.session.user_id] });
+    return res.render('wrong-user', { user: users[req.session.user_id] });
   }
 
   // if page doesn't exist, redirect
   if (!urlDatabase[req.params.shortURL]) {
     res.status(404);
-    res.redirect('/404_page/');
+    return res.redirect('/404_page/');
   }
 
-  res.render('urls_show', templateVars);
+  return res.render('urls_show', templateVars);
 });
 
 ////////////////////
@@ -296,12 +294,12 @@ app.get('/u/:shortURL', (req, res) => {
   // if page doesn't exist, redirect
   if (!urlDatabase[req.params.shortURL]) {
     res.status(404);
-    res.redirect('/404_page/');
+    return res.redirect('/404_page/');
   }
 
   const longURL = urlDatabase[req.params.shortURL].longURL;
 
-  res.redirect(longURL);
+  return res.redirect(longURL);
 });
 
 ////////////////////
@@ -314,7 +312,7 @@ app.get('*', (req, res) => {
 
   res.status(404);
 
-  res.render('404_page', templateVars);
+  return res.render('404_page', templateVars);
 });
 
 app.listen(PORT, () => {
