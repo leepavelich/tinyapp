@@ -263,13 +263,19 @@ app.get('/urls/:shortURL', (req, res) => {
   if (!req.session.views) {
     req.session.views = 0;
   }
-  req.session.views++;
+  
+  if (!req.session.unique_visitors) {
+    req.session.unique_visitors = [];
+  }
+
+
 
   const templateVars = {
     user: users[req.session.user_id],
     shortURL: req.params.shortURL,
     longURL: urlDatabase[req.params.shortURL].longURL,
     visits: req.session.views,
+    unique_visits: req.session.unique_visitors.length,
   };
 
   // URL must belong to user
@@ -295,6 +301,12 @@ app.get('/u/:shortURL', (req, res) => {
   if (!urlDatabase[req.params.shortURL]) {
     res.status(404);
     return res.redirect('/404_page/');
+  }
+
+  req.session.views++;
+
+  if (!req.session.unique_visitors.includes(req.session.user_id)) {
+    req.session.unique_visitors.push(req.session.user_id);
   }
 
   const longURL = urlDatabase[req.params.shortURL].longURL;
