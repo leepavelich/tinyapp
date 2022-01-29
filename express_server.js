@@ -263,12 +263,14 @@ app.get('/urls/:shortURL', (req, res) => {
   if (!req.session.views) {
     req.session.views = 0;
   }
-  
+
   if (!req.session.unique_visitors) {
     req.session.unique_visitors = [];
   }
 
-
+  if(!req.session.visit_log) {
+    req.session.visit_log = []
+  }
 
   const templateVars = {
     user: users[req.session.user_id],
@@ -276,6 +278,7 @@ app.get('/urls/:shortURL', (req, res) => {
     longURL: urlDatabase[req.params.shortURL].longURL,
     visits: req.session.views,
     unique_visits: req.session.unique_visitors.length,
+    logs: req.session.visit_log,
   };
 
   // URL must belong to user
@@ -308,6 +311,9 @@ app.get('/u/:shortURL', (req, res) => {
   if (!req.session.unique_visitors.includes(req.session.user_id)) {
     req.session.unique_visitors.push(req.session.user_id);
   }
+
+  const date = new Date();
+  req.session.visit_log.push([date.toUTCString(), req.session.user_id]);
 
   const longURL = urlDatabase[req.params.shortURL].longURL;
 
